@@ -5,6 +5,8 @@
 Escriba el codigo que ejecute la accion solicitada en cada pregunta.
 """
 
+import pandas as pd
+import os
 
 def pregunta_01():
     """
@@ -67,7 +69,33 @@ def pregunta_01():
     |  2 | Exel is headquartered in Mantyharju in Finland                                                                                                                         | neutral  |
     |  3 | Both operating profit and net sales for the three-month period increased , respectively from EUR16 .0 m and EUR139m , as compared to the corresponding quarter in 2006 | positive |
     |  4 | Tampere Science Parks is a Finnish company that owns , leases and builds office properties and it specialises in facilities for technology-oriented businesses         | neutral  |
-    ```
-
-
+    ```    
     """
+
+    datasetTest = {}
+    test = []
+    datasetTrain = {}
+    train = []
+    carpetas = ["files/input/input/test","files/input/input/train"]
+    sentimientos = ["negative","neutral","positive"]
+
+    for carpeta in carpetas:
+        for sentimiento in sentimientos:
+            for archivo in os.listdir(f"{carpeta}/{sentimiento}"):
+                with open(f"{carpeta}/{sentimiento}/{archivo}") as file:    
+                    linea = file.read()
+                    if carpeta == "files/input/input/test":
+                        datasetTest = {
+                            "phrase":linea,
+                            "target":sentimiento
+                        }
+                        test.append(datasetTest)
+                    else:
+                        datasetTrain = {
+                            "phrase":linea,
+                            "target":sentimiento
+                        }
+                        train.append(datasetTrain)
+    
+    dfTest = pd.DataFrame(test).to_csv("files/output/test_dataset.csv")
+    dfTrain = pd.DataFrame(train).to_csv("files/output/train_dataset.csv")
